@@ -1,21 +1,17 @@
 {
-    "version": 2,
     "buildCommand": "npm run build",
-    "installCommand": "npm run setup",
-    "builds": [
+    "installCommand": "npm install",
+    "rewrites": [
         {
-            "src": "*.ts",
-            "use": "typescript"
-        },
-        {
-            "src": "./index.js",
-            "use": "@vercel/node"
+            "source": "/(.*)",
+            "destination": "/",
+            "runtime":"@vercel/node"
         }
     ],
-    "routes": [
-        {
-            "src": "/(.*)",
-            "dest": "/"
+    "functions": {
+        "*": {
+            "memory": 3008,
+            "maxDuration": 30
         }
-    ]
-  }
+    }
+}
