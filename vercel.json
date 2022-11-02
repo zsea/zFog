@@ -7,5 +7,5 @@
             "destination": "/api"
         }
     ],
-    "outputDirectory":"/vercel/output"
+    "outputDirectory":"build"
 }
