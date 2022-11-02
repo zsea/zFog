@@ -4,8 +4,12 @@
     "installCommand": "npm run setup",
     "builds": [
         {
+            "src": "*.ts",
+            "use": "typescript"
+        },
+        {
             "src": "./index.js",
-            "use": "node"
+            "use": "@vercel/node"
         }
     ],
     "routes": [
