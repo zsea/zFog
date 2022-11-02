@@ -4,14 +4,7 @@
     "rewrites": [
         {
             "source": "/(.*)",
-            "destination": "/"
+            "destination": "/api"
         }
-    ],
-    "functions": {
-        "*": {
-            "memory": 1024,
-            "maxDuration": 10,
-            "runtime":"@vercel/node@2.5.26"
-        }
-    }
+    ]
 }
