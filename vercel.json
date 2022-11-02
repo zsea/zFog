@@ -4,14 +4,14 @@
     "rewrites": [
         {
             "source": "/(.*)",
-            "destination": "/",
-            "runtime":"@vercel/node"
+            "destination": "/"
         }
     ],
     "functions": {
         "*": {
             "memory": 3008,
-            "maxDuration": 30
+            "maxDuration": 30,
+            "runtime":"@vercel/node"
         }
     }
 }
