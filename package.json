@@ -7,7 +7,6 @@
     "dev": "env-loador nodemon ./dist/index.js",
     "init": "tsc --init",
     "build": "tsc",
-    "test": "tsc ./parallelizer.ts",
     "start": "node ./dist/index.js",
     "setup":"npm install & tsc"
   },
