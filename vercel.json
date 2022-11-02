@@ -9,7 +9,7 @@
     ],
     "functions": {
         "*": {
-            "memory": 3008,
+            "memory": 1024,
             "maxDuration": 10,
             "runtime":"@vercel/node"
         }
