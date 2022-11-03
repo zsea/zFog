@@ -1,10 +1,16 @@
 {
-    "installCommand": "npm install",
-    "rewrites": [
+    "version": 2,
+    "buildCommand": "npm run build",
+    "builds": [
         {
-            "source": "/(.*)",
-            "destination": "/api"
+            "src": "./index.ts",
+            "use": "@vercel/node"
         }
     ],
-    "outputDirectory":"dist"
-}
+    "routes": [
+        {
+            "src": "/(.*)",
+            "dest": "/"
+        }
+    ]
+  }
