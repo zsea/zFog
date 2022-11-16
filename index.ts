@@ -7,7 +7,6 @@ import { FogStorageManager } from './fs/FogStorageManager';
 import { loadConfigure } from './configure/index';
 import Express from 'express';
 
-console.log(loadConfigure);
 (async function main() {
     let configure = await loadConfigure((process.env["FOG_CONFIGURE_TYPE"]||"base64") as "base64" | "plain" | "file");
     const express = Express();
