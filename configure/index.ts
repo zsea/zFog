@@ -6,9 +6,12 @@ import { createSaver } from "./saver";
 import { server, ServerInfo } from "./server"
 import { createStorage } from "./storage";
 import fs from "fs/promises"
+import { logger } from "../logger";
 
 export async function loadConfigure(type: "base64" | "plain" | "file" = "base64", name?: string): Promise<ServerInfo> {
     name = name || "FOG_CONFIGURE";
+    logger.info(`配置方式:${type}`);
+    logger.info(`配置变量名称：${name}`)
     let v = process.env[name];
     if(type==="file"){
         v=await fs.readFile("configure.json","utf8");
