@@ -1,6 +1,6 @@
 declare module '@zsea/snowflake'{
     export class snowflake{
-        constructor(options:{
+        constructor(options?:{
             timestampBits:number,
             twepoch:number,
             workerIdBits:number,

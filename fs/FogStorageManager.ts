@@ -1,5 +1,12 @@
 import { v2 as webdav } from 'webdav-server'
-export class ZseaStorageManager implements webdav.IStorageManager{
+export class FogStorageManager implements webdav.IStorageManager{
+    /**
+     * 分配指定大小的空间，在create/delete/openWriteStream/propertyManager中有调用
+     * @param ctx 
+     * @param fs 
+     * @param size 
+     * @param callback 
+     */
     reserve(ctx : webdav.RequestContext, fs : webdav.FileSystem, size : number, callback : (reserved : boolean) => void) : void
     {
         callback(true);
@@ -25,6 +32,7 @@ export class ZseaStorageManager implements webdav.IStorageManager{
      */
     available(ctx : webdav.RequestContext, fs : webdav.FileSystem, callback : (available : number) => void) : void
     {
+        
         callback(-1);
     }
     /**
@@ -34,8 +42,7 @@ export class ZseaStorageManager implements webdav.IStorageManager{
      * @param callback 
      */
     reserved(ctx : webdav.RequestContext, fs : webdav.FileSystem, callback : (reserved : number) => void) : void
-    {        
-        //console.log(fs as any);
-        callback(0);
+    {   
+        callback(-1);
     }
 }
