@@ -21,7 +21,9 @@ import Express from 'express';
         logger.info(`[${ctx.request.method}] ${ctx.requested.path.toString()}`);
         next();
     })
-
+    server.afterRequest(ctx=>{
+        logger.info(`[${ctx.request.method}] ${ctx.requested.path.toString()} ===> [${ctx.response.statusCode}] ${ctx.response.statusMessage}`);
+    })
     // 开始挂载文件系统 
     let storageManager: StorageManager = new StorageManager();
     for (let storage of configure.storages) {
