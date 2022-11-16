@@ -63,7 +63,7 @@ export class BlockManager {
      * @return 写入的数据块个数
      */
     public async WriteBlock(index: number, input: Buffer): Promise<number> {
-        
+
         let crc32: number = crc16("MODBUS", input);
         let encryptoContent: Buffer = await this.crypto.encrypt(input);
         let returnValue: number = 0;
@@ -80,7 +80,7 @@ export class BlockManager {
          *     6. 结束，返回实际写入的存储器数量
          */
         let idList: string[] = this.storageManager.Find("canWrite");
-        
+
         let originIndex: number = 0;
 
         while (idList.length && returnValue < this.maxStorage) {
@@ -90,7 +90,7 @@ export class BlockManager {
                 origin?: string
             }[] = [];
 
-            for (let i = returnValue; i < this.maxStorage; i++) {
+            for (let i = returnValue; i < this.maxStorage || (this.mode === "all" && idList.length > 0); i++) {
                 let id: string | undefined;
                 let originContent: string | undefined;
                 if (this.overrideFirst && this.blocks[index] && originIndex < this.blocks[index].contents.length) {
@@ -108,6 +108,7 @@ export class BlockManager {
                                 storager: storager,
                                 origin: block.content
                             })
+                            idList = idList.filter(p => p !== block.id);
                             continue;
                         }
                     }
@@ -124,6 +125,9 @@ export class BlockManager {
                         this.cycleIndex = 0;
                     }
                     id = idList[this.cycleIndex++];
+                }
+                else if (this.mode === "all") {
+                    id = idList[0];
                 }
                 if (!id) break;
 
@@ -143,7 +147,7 @@ export class BlockManager {
             }
             let tasks = selector.map(item => Promise.resolve(item).then(function (item) {
                 //TODO:[V] 写入后添加数据校验，确认定入数据正确
-                return item.storager.save(encryptoContent, item.origin).then((name)=>{
+                return item.storager.save(encryptoContent, item.origin).then((name) => {
                     // return item.storager.read(name).then((buf)=>{
                     //     if(buf.equals(encryptoContent)){
                     //         return name;
@@ -276,7 +280,7 @@ export class BlockManager {
      * @param maxStorage 每个数据块，存储几份（每一份存储在不同的地方）
      * @param mode 存储模式
      */
-    constructor(private storageManager: StorageManager, private maxStorage: number = 1, private mode: "random" | "cycle" = "random", private crypto: ICrypto = new NoneCrypto()) {
+    constructor(private storageManager: StorageManager, private maxStorage: number = 1, private mode: "random" | "cycle" | "all" = "random", private crypto: ICrypto = new NoneCrypto()) {
 
     }
     public toJSON(): string {
@@ -467,7 +471,7 @@ export class INodeManager {
             if (!this.inodes["/"]) {
                 this.createINode("/", "dir");
             }
-            
+
             return true;
         })
     }
@@ -560,9 +564,9 @@ export class INodeManager {
             //采用深度优先遍历
             let children = this.getChildren(from);
             for (let i = 0; i < children.length; i++) {
-                
+
                 let name = path.basename(children[i]);
-                let nPath = path.join([to,name]);
+                let nPath = path.join([to, name]);
                 await this.moveINode(children[i], nPath);
             }
             //return ino

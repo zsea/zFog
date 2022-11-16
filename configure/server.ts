@@ -16,7 +16,7 @@ export interface server{
     authentication:authentication,
     blockSize?:number,
     copies?:number,
-    copyMode:"random"|"cycle"
+    copyMode:"random"|"cycle"|"all"
 }
 export interface ServerInfo{
     timeout:number,
@@ -28,5 +28,5 @@ export interface ServerInfo{
     privilegeManager?:webdav.PrivilegeManager,
     blockSize:number,
     copies:number,
-    copyMode:"random"|"cycle"
+    copyMode:"random"|"cycle"|"all"
 }

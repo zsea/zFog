@@ -5,14 +5,20 @@ import { createCrypto } from "./crypto";
 import { createSaver } from "./saver";
 import { server, ServerInfo } from "./server"
 import { createStorage } from "./storage";
+import fs from "fs/promises"
 
-export function loadConfigure(type: "base64" | "plain" = "base64", name?: string): ServerInfo {
+export async function loadConfigure(type: "base64" | "plain" | "file" = "base64", name?: string): Promise<ServerInfo> {
     name = name || "FOG_CONFIGURE";
     let v = process.env[name];
-    if (!v) throw new Error("未找到配置信息");
-    if (type === "base64") {
+    if(type==="file"){
+        v=await fs.readFile("configure.json","utf8");
+    }
+    else if(type==="base64"&&v){
         v = Buffer.from(v, "base64").toString("utf8");
     }
+    
+    if (!v) throw new Error("未找到配置信息");
+    
     let cfg: server = JSON.parse(v);
     let auth = createAuthentication(cfg.authentication);
     let storages: IStorage[] = [];
@@ -31,7 +37,7 @@ export function loadConfigure(type: "base64" | "plain" = "base64", name?: string
         storages: storages,
         saver: cfg.saver ? createSaver(cfg.saver, storages) : undefined,
         blockSize: cfg.blockSize || 1024 * 1024 * 2,
-        copies:cfg.copies||1,
-        copyMode:cfg.copyMode||"cycle"
+        copies: cfg.copies || 1,
+        copyMode: cfg.copyMode || "cycle"
     };
 }

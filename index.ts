@@ -4,12 +4,12 @@ import { logger } from "./logger"
 import { BlockManager, INodeManager } from './fs/inode';
 import { StorageManager } from './fs/storage';
 import { FogStorageManager } from './fs/FogStorageManager';
-import { loadConfigure } from './configure';
+import { loadConfigure } from './configure/index';
 import Express from 'express';
 
-
+console.log(loadConfigure);
 (async function main() {
-    let configure = loadConfigure();
+    let configure = await loadConfigure((process.env["FOG_CONFIGURE_TYPE"]||"base64") as "base64" | "plain" | "file");
     const express = Express();
     const server = new webdav.WebDAVServer({
         httpAuthentication: configure.httpAuthentication,
