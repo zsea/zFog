@@ -2,12 +2,12 @@ import { IStorage, StorageManager } from "./storage"
 import {
     LocalPropertyManager,
     LocalLockManager,
-} from 'webdav-server/lib/manager/v2/fileSystem/export'
+} from '@zsea/webdav-server/lib/manager/v2/fileSystem/export'
 import { crc16 } from "easy-crc"
 import { Random } from "./random"
 import { logger } from "../logger"
 import { ICrypto, NoneCrypto } from "./icrypto"
-import { INodeSaver, LocalSaver, MemorySaver } from "./isaver"
+import { INodeSaver, MemorySaver } from "./isaver"
 import { Parallelizer } from "./parallelizer"
 import path from "./path"
 
