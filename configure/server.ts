@@ -5,7 +5,7 @@ import { authentication } from "./authentication"
 import { crypto } from "./crypto"
 import { saver } from "./saver"
 import { storage } from "./storage"
-import { v2 as webdav } from 'webdav-server'
+import { v2 as webdav } from '@zsea/webdav-server'
 
 export interface server{
     timeout:number|undefined
@@ -16,7 +16,9 @@ export interface server{
     authentication:authentication,
     blockSize?:number,
     copies?:number,
-    copyMode:"random"|"cycle"|"all"
+    copyMode:"random"|"cycle"|"all",
+    useHost?:string,
+    useProtocol?:string,
 }
 export interface ServerInfo{
     timeout:number,
@@ -29,4 +31,6 @@ export interface ServerInfo{
     blockSize:number,
     copies:number,
     copyMode:"random"|"cycle"|"all"
+    useHost?:string
+    useProtocol?:string
 }

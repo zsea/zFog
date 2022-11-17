@@ -1,4 +1,4 @@
-import { v2 as webdav } from 'webdav-server'
+import { v2 as webdav } from '@zsea/webdav-server'
 import { FogFileSystem } from './fs/FogFileSystem';
 import { logger } from "./logger"
 import { BlockManager, INodeManager } from './fs/inode';
@@ -9,13 +9,19 @@ import Express from 'express';
 
 (async function main() {
     let configure = await loadConfigure((process.env["FOG_CONFIGURE_TYPE"]||"base64") as "base64" | "plain" | "file");
+    let reqHeaders:{[name:string]:string}|undefined;
+    if(configure.useHost){
+        reqHeaders={"host":configure.useHost}
+    }
+
     const express = Express();
     const server = new webdav.WebDAVServer({
         httpAuthentication: configure.httpAuthentication,
         privilegeManager: configure.privilegeManager,
         //port: Number(process.env.PORT || process.env["WEBPORT"] || 3000),
         storageManager: new FogStorageManager(),
-
+        reqHeaders:reqHeaders,
+        usedProtocol:configure.useProtocol
     });
     server.beforeRequest((ctx, next) => {
         logger.info(`[${ctx.request.method}] ${ctx.requested.path.toString()}`);

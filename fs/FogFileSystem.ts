@@ -21,12 +21,11 @@ import {
     SizeInfo,
     TypeInfo,
     MoveInfo
-} from 'webdav-server/lib/manager/v2/fileSystem/export'
+} from '@zsea/webdav-server/lib/manager/v2/fileSystem/export'
 import { Readable, Writable } from 'stream'
-import { RequestContext } from 'webdav-server/lib/server/v2/RequestContext'
-import { startsWith } from 'webdav-server/lib/helper/JSCompatibility'
-import { Errors } from 'webdav-server/lib/Errors'
-import { Path } from 'webdav-server/lib/manager/v2/Path'
+import { RequestContext } from '@zsea/webdav-server/lib/server/v2/RequestContext'
+import { Errors } from '@zsea/webdav-server/lib/Errors'
+import { Path } from '@zsea/webdav-server/lib/manager/v2/Path'
 import AsyncLock from "async-lock"
 
 import { INode, INodeManager } from "./inode"

@@ -1,4 +1,4 @@
-import { v2 as webdav } from 'webdav-server'
+import { v2 as webdav } from '@zsea/webdav-server'
 export class FogStorageManager implements webdav.IStorageManager{
     /**
      * 分配指定大小的空间，在create/delete/openWriteStream/propertyManager中有调用

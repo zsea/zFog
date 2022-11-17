@@ -1,4 +1,3 @@
-import { ICrypto } from "../fs/icrypto";
 import { IStorage } from "../fs/storage";
 import { createAuthentication } from "./authentication";
 import { createCrypto } from "./crypto";
@@ -41,6 +40,8 @@ export async function loadConfigure(type: "base64" | "plain" | "file" = "base64"
         saver: cfg.saver ? createSaver(cfg.saver, storages) : undefined,
         blockSize: cfg.blockSize || 1024 * 1024 * 2,
         copies: cfg.copies || 1,
-        copyMode: cfg.copyMode || "cycle"
+        copyMode: cfg.copyMode || "cycle",
+        useHost:cfg.useHost,
+        useProtocol:cfg.useProtocol
     };
 }

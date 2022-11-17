@@ -1,4 +1,4 @@
-import { v2 as webdav } from 'webdav-server'
+import { v2 as webdav } from '@zsea/webdav-server'
 export interface user {
     username: string,
     password: string,
