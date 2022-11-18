@@ -48,14 +48,14 @@ export class GiteeStorage extends FullSaver implements IStorage {
     }
 
     protected _saver_write(content: string): Promise<void | undefined> {
-        return this.save(Buffer.from(content, "utf8"), "inodes.json").then(() => {})
+        return this.save(Buffer.from(content, "utf8"), "inodes.json").then(() => { })
     }
     protected _saver_read(): Promise<string | undefined> {
         return this.read("inodes.json").then(buffer => {
             return buffer.toString("utf8");
-        }).catch(e=>{
-            if(e.message==="NotFound"||e.message==="NotBlockFile"){
-                return JSON.stringify({timestamp:0,inodes:{}})
+        }).catch(e => {
+            if (e.message === "NotFound" || e.message === "NotBlockFile") {
+                return JSON.stringify({ timestamp: 0, inodes: {} })
             }
             throw e;
         })
@@ -64,12 +64,12 @@ export class GiteeStorage extends FullSaver implements IStorage {
     get type(): string {
         return "gitee"
     }
-    private _mode:number=7;
+    private _mode: number = 7;
     get mode(): number {
         return this._mode;
     }
-    set mode(v:number){
-        this._mode=v;
+    set mode(v: number) {
+        this._mode = v;
     }
     get id(): string {
         return this._id;
@@ -81,8 +81,13 @@ export class GiteeStorage extends FullSaver implements IStorage {
             let file = await this.getFile(path);
             if (file.encoding === "base64" && file.type === "file") {
                 let content = Buffer.from(file.content as string, "base64").toString("utf8");
-                let fog = JSON.parse(content);
-                this._id = fog.id;
+                try {
+                    let fog = JSON.parse(content);
+                    this._id = fog.id;
+                }
+                catch (e) {
+
+                }
             }
         }
         catch (e: any) {
@@ -101,8 +106,8 @@ export class GiteeStorage extends FullSaver implements IStorage {
     private getFile(path: string): Promise<GiteeAPIResource> {
         let self = this;
 
-        return this.axios.get(`https://gitee.com/api/v5/repos/${self.configure.owner}/${self.configure.repo}/contents${path}?ref=${self.configure.branch}&access_token=${self.configure.access_token}`,{
-            responseType:"json"
+        return this.axios.get(`https://gitee.com/api/v5/repos/${self.configure.owner}/${self.configure.repo}/contents${path}?ref=${self.configure.branch}&access_token=${self.configure.access_token}`, {
+            responseType: "json"
         })
             .then(function (res) {
 
@@ -159,13 +164,13 @@ export class GiteeStorage extends FullSaver implements IStorage {
                     return Buffer.from(body.content as string, "base64");
                 });
             });
-        }, 5, 500).then((buffer:Buffer)=>{
-            return Buffer.from(buffer.toString("utf8"),"base64");
+        }, 5, 500).then((buffer: Buffer) => {
+            return Buffer.from(buffer.toString("utf8"), "base64");
         });
     }
 
     save(buffer: Buffer, origin?: string | undefined): Promise<string> {
-        buffer=Buffer.from(buffer.toString("base64"),"utf8");
+        buffer = Buffer.from(buffer.toString("base64"), "utf8");
         let content = buffer.toString("base64");
         let path = this.configure.root;
         let fileName = origin;
@@ -193,7 +198,7 @@ export class GiteeStorage extends FullSaver implements IStorage {
                     return self.axios.post(url, body)
                 }).then(() => {
                     return fileName;
-                }).catch(e=>{
+                }).catch(e => {
                     logger.debug(e);
                     throw e;
                 }).finally(function () {

@@ -34,18 +34,18 @@ export class GithubStorage extends FullSaver implements IStorage {
     private _id: string = "";
     constructor(private access_token: string, private owner: string, private repo: string, private branch: string = "main", private root: string = "/") {
         super();
-        
+
     }
     protected _saver_write(content: string): Promise<void | undefined> {
 
-        return this.save(Buffer.from(content, "utf8"), "inodes.json").then(() => {})
+        return this.save(Buffer.from(content, "utf8"), "inodes.json").then(() => { })
     }
     protected _saver_read(): Promise<string | undefined> {
         return this.read("inodes.json").then(buffer => {
             return buffer.toString("utf8");
-        }).catch(e=>{
-            if(e.message==="NotFound"){
-                return JSON.stringify({timestamp:0,inodes:{}})
+        }).catch(e => {
+            if (e.message === "NotFound") {
+                return JSON.stringify({ timestamp: 0, inodes: {} })
             }
             throw e;
         })
@@ -53,27 +53,32 @@ export class GithubStorage extends FullSaver implements IStorage {
     get type(): string {
         return "github"
     }
-    private _mode:number=7;
+    private _mode: number = 7;
     get mode(): number {
         return this._mode;
     }
-    set mode(v:number){
-        this._mode=v;
+    set mode(v: number) {
+        this._mode = v;
     }
     get id(): string {
         return this._id
     }
     async initialize(): Promise<boolean> {
-        
+
         let path = this.root + ".fog";
 
         try {
             let file = await this.getFile(path);
-            
+
             if (file.encoding === "base64" && file.type === "file") {
                 let content = Buffer.from(file.content as string, "base64").toString("utf8");
-                let fog = JSON.parse(content);
-                this._id = fog.id;
+                try {
+                    let fog = JSON.parse(content);
+                    this._id = fog.id;
+                }
+                catch (e) {
+
+                }
             }
         }
         catch (e: any) {
@@ -86,7 +91,7 @@ export class GithubStorage extends FullSaver implements IStorage {
             await this.save(Buffer.from(JSON.stringify({ id: id })), ".fog");
             this._id = id
         }
-        
+
         return !!this._id;
     }
     cached: {
@@ -100,7 +105,7 @@ export class GithubStorage extends FullSaver implements IStorage {
         let self = this;
         return this.axios.get(`${path}?ref=${this.branch}`)
             .then(function (res) {
-                
+
                 let body: GithubAPIResource;
                 if (Array.isArray(res.data)) {
                     throw new Error("NotBlockFile");
@@ -168,8 +173,8 @@ export class GithubStorage extends FullSaver implements IStorage {
 
                         let download_url = body.download_url;
                         if (!download_url) throw new Error("NotFound");
-                        return self.axios.get(download_url,{
-                            responseType:"blob"
+                        return self.axios.get(download_url, {
+                            responseType: "blob"
                         }).then(function (res) {
                             //logger.debug(res.data);
                             return res.data
@@ -186,12 +191,12 @@ export class GithubStorage extends FullSaver implements IStorage {
                     throw e;
                 });
             });
-        }, 5, 500).then((buffer:Buffer)=>{
-            return Buffer.from(buffer.toString("utf8"),"base64");
+        }, 5, 500).then((buffer: Buffer) => {
+            return Buffer.from(buffer.toString("utf8"), "base64");
         });
     }
     save(buffer: Buffer, origin?: string | undefined): Promise<string> {
-        buffer=Buffer.from(buffer.toString("base64"),"utf8");
+        buffer = Buffer.from(buffer.toString("base64"), "utf8");
         let content = buffer.toString("base64");
         let path = this.root;
         let fileName = origin;
@@ -202,7 +207,7 @@ export class GithubStorage extends FullSaver implements IStorage {
 
         let self = this;
         return retry(function () {
-            
+
             return self.parallelizer.execute(function () {
 
                 return self.getSha(path).then(function (sha: string | undefined): Promise<any> {
@@ -221,7 +226,7 @@ export class GithubStorage extends FullSaver implements IStorage {
                         body["sha"] = sha;
 
                     }
-                    
+
                     return self.axios.put(path, body)
                 }).then((s) => {
                     return fileName;
