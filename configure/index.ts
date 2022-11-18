@@ -43,6 +43,7 @@ export async function loadConfigure(type: "base64" | "plain" | "file" = "base64"
         copies: cfg.copies || 1,
         copyMode: cfg.copyMode || "cycle",
         useHost:cfg.useHost,
-        useProtocol:cfg.useProtocol
+        useProtocol:cfg.useProtocol,
+        totalSize:(cfg.totalSize===null||cfg.totalSize===undefined)?-1:cfg.totalSize
     };
 }

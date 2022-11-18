@@ -20,7 +20,7 @@ import { CryptoManager } from './fs/icrypto';
         httpAuthentication: configure.httpAuthentication,
         privilegeManager: configure.privilegeManager,
         //port: Number(process.env.PORT || process.env["WEBPORT"] || 3000),
-        storageManager: new FogStorageManager(),
+        storageManager: new FogStorageManager(configure.totalSize),
         reqHeaders:reqHeaders,
         usedProtocol:configure.useProtocol
     });

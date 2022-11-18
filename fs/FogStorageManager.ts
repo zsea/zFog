@@ -1,5 +1,7 @@
 import { v2 as webdav } from '@zsea/webdav-server'
+import { FogFileSystem } from './FogFileSystem';
 export class FogStorageManager implements webdav.IStorageManager{
+    constructor(private totalSize:number=-1){}
     /**
      * 分配指定大小的空间，在create/delete/openWriteStream/propertyManager中有调用
      * @param ctx 
@@ -32,8 +34,10 @@ export class FogStorageManager implements webdav.IStorageManager{
      */
     available(ctx : webdav.RequestContext, fs : webdav.FileSystem, callback : (available : number) => void) : void
     {
-        
-        callback(-1);
+        if(this.totalSize<0) return callback(this.totalSize);
+        this.reserved(ctx,fs,(reserved)=>{
+            callback(this.totalSize-reserved);
+        })
     }
     /**
      * 已用空间
@@ -43,6 +47,11 @@ export class FogStorageManager implements webdav.IStorageManager{
      */
     reserved(ctx : webdav.RequestContext, fs : webdav.FileSystem, callback : (reserved : number) => void) : void
     {   
-        callback(-1);
+        //console.log(ctx.requested.path.toString());
+        let size=0;
+        if(fs.constructor===FogFileSystem){
+            size=(fs as FogFileSystem).getSize(ctx.requested.path.toString());
+        }
+        callback(size);
     }
 }

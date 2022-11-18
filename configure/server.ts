@@ -19,6 +19,7 @@ export interface server{
     copyMode:"random"|"cycle"|"all",
     useHost?:string,
     useProtocol?:string,
+    totalSize?:number
 }
 export interface ServerInfo{
     timeout:number,
@@ -33,4 +34,5 @@ export interface ServerInfo{
     copyMode:"random"|"cycle"|"all"
     useHost?:string
     useProtocol?:string
+    totalSize:number
 }

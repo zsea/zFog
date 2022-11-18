@@ -148,6 +148,10 @@ export class FogFileSystem extends FileSystem {
 
     }
 
+    getSize(path:string):number{
+        return Number(this.inodeManager.getSize(path));
+    }
+
     protected _fastExistCheck(ctx: RequestContext, path: Path, callback: (exists: boolean) => void): void {
         this.inodeManager.getINode(path.toString())
         return callback(this.inodeManager.getINode(path.toString()) !== undefined);
