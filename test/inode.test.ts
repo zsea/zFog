@@ -1,4 +1,4 @@
-import { NoneCrypto } from "../fs/icrypto";
+import { CryptoManager, NoneCrypto } from "../fs/icrypto";
 import { BlockManager, INodeManager } from "../fs/inode"
 import { LocalSaver } from "../fs/isaver";
 import { StorageManager, NullStorage } from "../fs/storage";
@@ -14,7 +14,7 @@ describe("INode", () => {
 
     })
     let inodeManager: INodeManager = new INodeManager(()=>{
-        return new BlockManager(storageManager, 1, "random", new NoneCrypto())
+        return new BlockManager(storageManager, 1, "random", new CryptoManager([new NoneCrypto("")]))
     }, new LocalSaver("./disk/inodes.json"));
     test('创建 /', () => {
         let inode = inodeManager.createINode("/", "dir");
