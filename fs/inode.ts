@@ -6,7 +6,7 @@ import {
 import { crc16 } from "easy-crc"
 import { Random } from "./random"
 import { logger } from "../logger"
-import { ICrypto, NoneCrypto } from "./icrypto"
+import { ICrypto, NoneCrypto,CryptoManager } from "./icrypto"
 import { INodeSaver, MemorySaver } from "./isaver"
 import { Parallelizer } from "./parallelizer"
 import path from "./path"
@@ -33,6 +33,10 @@ export interface Block {
      */
     crc32: number
     contents: BlockContent[]
+    /**
+     * 加密器ID，方便在后期添加新的加密器而不影响前期数据解密
+     */
+    crypto:string
 }
 /**
  * 对数据块进行管理
@@ -65,7 +69,8 @@ export class BlockManager {
     public async WriteBlock(index: number, input: Buffer): Promise<number> {
 
         let crc32: number = crc16("MODBUS", input);
-        let encryptoContent: Buffer = await this.crypto.encrypt(input);
+        let crypto:ICrypto=this.cryptoManager.cryptos[0];
+        let encryptoContent: Buffer = await crypto.encrypt(input);
         let returnValue: number = 0;
         let newBlocks: BlockContent[] = []
         /**
@@ -191,7 +196,8 @@ export class BlockManager {
         //将新数据添加到链中
         this.blocks[index] = {
             contents: newBlocks,
-            crc32: crc32
+            crc32: crc32,
+            crypto:crypto.id
         }
 
         //删除原来有，但现在没有使用的块
@@ -217,14 +223,16 @@ export class BlockManager {
          * 从任意一个块中读取数据即可
          */
         let blocks = this.blocks[index];
-        if (!blocks) new Error("NotFound");
+        if (!blocks) throw new Error("NotFound");
+        let crypto=this.cryptoManager.getCrypto(blocks.crypto);
+        if(!crypto) throw new Error("NotCryptor");
         let sContent: Buffer | undefined = undefined;
         for (let i = 0; i < blocks.contents.length; i++) {
             let storager = this.storageManager.GetStorage(blocks.contents[i].id);
             if (storager && storager.type === blocks.contents[i].type) {
                 try {
                     let tContent = await storager.read(blocks.contents[i].content);
-                    tContent = await this.crypto.decrypt(tContent);
+                    tContent = await crypto.decrypt(tContent);
                     let crc32: number = crc16("MODBUS", tContent);
                     if (crc32 !== this.blocks[index].crc32) {
                         logger.error(`从 ${storager.type}/${storager.id} CRC校验失败，计算值：${crc32}，期望值：${this.blocks[index].crc32}`);
@@ -280,7 +288,7 @@ export class BlockManager {
      * @param maxStorage 每个数据块，存储几份（每一份存储在不同的地方）
      * @param mode 存储模式
      */
-    constructor(private storageManager: StorageManager, private maxStorage: number = 1, private mode: "random" | "cycle" | "all" = "random", private crypto: ICrypto = new NoneCrypto()) {
+    constructor(private storageManager: StorageManager, private maxStorage: number = 1, private mode: "random" | "cycle" | "all" = "random", private cryptoManager:CryptoManager=new CryptoManager([new NoneCrypto("")])) {
 
     }
     public toJSON(): string {

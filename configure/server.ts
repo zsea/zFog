@@ -10,7 +10,7 @@ import { v2 as webdav } from '@zsea/webdav-server'
 export interface server{
     timeout:number|undefined
     path:string|undefined
-    crypto:crypto,
+    crypto?:crypto[],
     saver?:saver,
     storages:storage[],
     authentication:authentication,
@@ -23,7 +23,7 @@ export interface server{
 export interface ServerInfo{
     timeout:number,
     path:string,
-    crypto:ICrypto,
+    crypto:ICrypto[],
     saver?:INodeSaver,
     storages:IStorage[],
     httpAuthentication?:webdav.HTTPAuthentication,

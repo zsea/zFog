@@ -6,6 +6,7 @@ import { StorageManager } from './fs/storage';
 import { FogStorageManager } from './fs/FogStorageManager';
 import { loadConfigure } from './configure/index';
 import Express from 'express';
+import { CryptoManager } from './fs/icrypto';
 
 (async function main() {
     let configure = await loadConfigure((process.env["FOG_CONFIGURE_TYPE"]||"base64") as "base64" | "plain" | "file");
@@ -44,7 +45,7 @@ import Express from 'express';
     }
 
     let inodeManager: INodeManager = new INodeManager(() => {
-        return new BlockManager(storageManager, configure.copies, configure.copyMode, configure.crypto)
+        return new BlockManager(storageManager, configure.copies, configure.copyMode, new CryptoManager(configure.crypto))
     }, configure.saver);
     if (!await inodeManager.initialize()) {
         throw new Error("inode文件初始化失败。");

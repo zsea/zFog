@@ -1,7 +1,7 @@
 import { XorCrypto,Base64Crypto } from "../fs/icrypto";
 
 describe("异或加解密",()=>{
-    let xorCrypto=new XorCrypto(1)
+    let xorCrypto=new XorCrypto("",1)
     //let encrypto:Buffer|undefined;
     test("加密测试",()=>{
         let buffer=Buffer.from([1,1,1,1]);
@@ -20,7 +20,7 @@ describe("异或加解密",()=>{
     })
 })
 describe("Base64加密",()=>{
-    let base64Crypto=new Base64Crypto()
+    let base64Crypto=new Base64Crypto("")
     //let encrypto:Buffer|undefined;
     test("加密测试",()=>{
         let buffer=Buffer.from("this is a example","utf8");

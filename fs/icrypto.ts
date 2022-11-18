@@ -1,8 +1,16 @@
 export interface ICrypto {
     decrypt(buffer: Buffer): Promise<Buffer>
     encrypt(buffer: Buffer): Promise<Buffer>
+    id:string
 }
-
+export class CryptoManager {
+    constructor(public cryptos: ICrypto[]) {
+    }
+    getCrypto(id:string):ICrypto|undefined{
+        let crypto=this.cryptos.find(p=>p.id===id);
+        return crypto;
+    }
+}
 export class NoneCrypto implements ICrypto {
     decrypt(buffer: Buffer): Promise<Buffer> {
         return Promise.resolve(buffer);
@@ -10,11 +18,13 @@ export class NoneCrypto implements ICrypto {
     encrypt(buffer: Buffer): Promise<Buffer> {
         return Promise.resolve(buffer);
     }
+    constructor(public id:string){
 
+    }
 }
 
 export class XorCrypto implements ICrypto {
-    constructor(private mode: number) {
+    constructor(public id:string,private mode: number) {
 
     }
     decrypt(buffer: Buffer): Promise<Buffer> {
@@ -35,11 +45,13 @@ export class XorCrypto implements ICrypto {
 }
 export class Base64Crypto implements ICrypto {
     decrypt(buffer: Buffer): Promise<Buffer> {
-        return Promise.resolve(Buffer.from(buffer.toString("utf8"),"base64"))
+        return Promise.resolve(Buffer.from(buffer.toString("utf8"), "base64"))
         //return Promise.resolve(Buffer.from(buffer.toString("base64"), "utf-8"));
     }
     encrypt(buffer: Buffer): Promise<Buffer> {
         return Promise.resolve(Buffer.from(buffer.toString("base64"), "utf-8"));
     }
+    constructor(public id:string){
 
+    }
 }

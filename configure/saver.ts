@@ -13,6 +13,7 @@ export function createSaver(s:saver,storages?:IStorage[]):INodeSaver|undefined{
     if(s.from&&storages){
         let finder=storages.find(p=>(p as any).ref===s.from&&s.type===p.type);
         if(finder) return (finder as any) as INodeSaver;
+        throw new Error(`Saver ${s.from} Not Found`)
     }
     switch(s.type){
         case "local":{

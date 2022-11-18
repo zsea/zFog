@@ -6,6 +6,7 @@ import { server, ServerInfo } from "./server"
 import { createStorage } from "./storage";
 import fs from "fs/promises"
 import { logger } from "../logger";
+import { NoneCrypto } from "../fs/icrypto";
 
 export async function loadConfigure(type: "base64" | "plain" | "file" = "base64", name?: string): Promise<ServerInfo> {
     name = name || "FOG_CONFIGURE";
@@ -33,7 +34,7 @@ export async function loadConfigure(type: "base64" | "plain" | "file" = "base64"
     return {
         timeout: cfg.timeout || 0,
         path: cfg.path || "/",
-        crypto: createCrypto(cfg.crypto),
+        crypto: cfg.crypto? cfg.crypto.map(p=>createCrypto(p)):[new NoneCrypto("")],
         httpAuthentication: auth ? auth.authentication : undefined,
         privilegeManager: auth ? auth.privilege : undefined,
         storages: storages,

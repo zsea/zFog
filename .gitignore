@@ -4,3 +4,4 @@ dist
 disk
 configure.json
 ecosystem.config.js
+configure.template.json
