@@ -30,6 +30,9 @@ export function createStorage(item:storage):IStorage|void|undefined{
     }
     if(storage){
         storage.mode=item.mode;
+        if(item.ref){
+            (storage as any).ref=item.ref;
+        }
     }
     return storage;
 }

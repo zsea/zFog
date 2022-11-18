@@ -5,28 +5,23 @@ import { IStorage } from "../fs/storage"
 
 export interface saver{
     type:"gitee"|"github"|"local"|"array"|"memory"
-    fromStorage:boolean
     [key:string]:string|boolean|number|saver[]
 
 }
 
 export function createSaver(s:saver,storages?:IStorage[]):INodeSaver|undefined{
+    if(s.from&&storages){
+        let finder=storages.find(p=>(p as any).ref===s.from&&s.type===p.type);
+        if(finder) return (finder as any) as INodeSaver;
+    }
     switch(s.type){
         case "local":{
             return new LocalSaver(s.path as string);
         }
         case "github":{
-            if(s.fromStorage){
-                let storage=(storages||[]).find(p=>p.type==="github");
-                return storage as GithubStorage;
-            }
             return new GithubStorage(s.token as string,s.owner as string,s.repo as string,s.branch as string,s.root as string);
         }
         case "gitee":{
-            if(s.fromStorage){
-                let storage=(storages||[]).find(p=>p.type==="gitee");
-                return storage as GiteeStorage;
-            }
             return new GiteeStorage(s.token as string,s.owner as string,s.repo as string,s.branch as string,s.root as string);
         }
         case "memory":{

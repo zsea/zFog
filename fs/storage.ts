@@ -23,6 +23,7 @@ export interface IStorage {
     get id(): string
     //TODO: [V] 增加初始化方法，用于初始化存储的相关信息，比如生成ID等
     initialize(): Promise<boolean>
+
 }
 export class NullStorage implements IStorage {
     private _mode:number=7;
