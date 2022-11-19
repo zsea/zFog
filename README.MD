@@ -186,3 +186,7 @@ inode数据的存储器。
     * username - 账号名称
     * password - 密码
     * rights - 用户权限，可空（具有所有权限）。数据类型为：object，对象的键为访问路径，值为指定路径的访问权限，可选值为：'canWrite' | 'canWriteLocks' | 'canWriteContent' | 'canWriteContentTranslated' | 'canWriteContentSource' | 'canWriteProperties' | 'canRead' | 'canReadLocks' | 'canReadContent' | 'canReadContentTranslated' | 'canReadContentSource' | 'canReadProperties'
+
+# 致谢
+
+本项目使用了[npm-WebDAV-Server](https://github.com/OpenMarshal/npm-WebDAV-Server)提供的WEDAV功能，并对该项目的代码进行了部分修改，并重新发布到了```npm```，在此对```npm-WebDAV-Server```的原作者是表示感谢。修改后的代码仓库地址为：[https://github.com/zsea/npm-WebDAV-Server](https://github.com/zsea/npm-WebDAV-Server)。
