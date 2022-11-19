@@ -13,7 +13,7 @@
 
 数据流向如下：
 
-![数据流向](./doc/dataflow.png)
+![数据流向](./files/dataflow.png)
 
 # 安装
 
