@@ -9,7 +9,7 @@
 * [x] Gitee
 * [ ] 百度网盘
 * [ ] 腾讯云COS
-* [ ] 阿里云OSS
+* [x] 阿里云OSS
 
 数据流向如下：
 
@@ -130,7 +130,7 @@ Vercel上可以直接运行```typescript```的项目，你可以直接Fork本项
 
 inode数据的存储器。
 
-* type - 存储类型，可选值："gitee"|"github"|"local"|"array"|"memory"
+* type - 存储类型，可选值："gitee"|"github"|"local"|"array"|"memory"|"oss"
     * gitee - 使用```gitee```仓库存储inode数据。
         * token - 调用API的token
         * owner - 存储仓库的owner
@@ -148,6 +148,12 @@ inode数据的存储器。
     * array - 多个saver的集合，每个server都需要存储一份数据。
         * children - saver[]。可用的saver集合。
     * memory - 内存存储，重启服务会丢失数据。
+    * oss - 阿里云oss存储。
+        * accessKey - 阿里云AccessKey
+        * secret - 阿里云访问的Secret
+        * host - 阿里云OSS所在区域的访问主机，不包括blucket名称
+        * blucket -OSS存储的blucket名称
+        * root - 存储的根目录
 * from - 将数据块存储器转换为inode数据存储器，此处与数据块存储器配置中的```ref```值相匹配。
 
 ### storages
@@ -170,6 +176,12 @@ inode数据的存储器。
         * repo - 仓库名称
         * branch - 分支名称。
         * root - 存储的根目录
+    * oss - 阿里云oss存储。
+        * accessKey - 阿里云AccessKey
+        * secret - 阿里云访问的Secret
+        * host - 阿里云OSS所在区域的访问主机，不包括blucket名称
+        * blucket -OSS存储的blucket名称
+        * root - 存储的根目录        
 * mode - 存储器权限。0b111，从左到右，第1位：读的权限，第二位：写的权限，第三位：删除的权限。
 * ref - 字符串，设置值后，在saver配置中可使用当前值匹配到，要求IStorage必须同时实现ISaver
 

@@ -1,10 +1,11 @@
 import { GiteeStorage } from "../fs/devices/gitee"
 import { GithubStorage } from "../fs/devices/github"
+import { OSSStorage } from "../fs/devices/oss"
 import { ArraySaver, INodeSaver, LocalSaver, MemorySaver } from "../fs/isaver"
 import { IStorage } from "../fs/storage"
 
 export interface saver{
-    type:"gitee"|"github"|"local"|"array"|"memory"
+    type:"gitee"|"github"|"local"|"array"|"memory"|"oss"
     [key:string]:string|boolean|number|saver[]
 
 }
@@ -24,6 +25,9 @@ export function createSaver(s:saver,storages?:IStorage[]):INodeSaver|undefined{
         }
         case "gitee":{
             return new GiteeStorage(s.token as string,s.owner as string,s.repo as string,s.branch as string,s.root as string);
+        }
+        case "oss":{
+            return new OSSStorage(s.accessKey as string,s.secret as string,s.host as string,s.blucket as string,s.root as string);
         }
         case "memory":{
             return new MemorySaver();
