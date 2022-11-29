@@ -9,10 +9,10 @@ import Express from 'express';
 import { CryptoManager } from './fs/icrypto';
 
 (async function main() {
-    let configure = await loadConfigure((process.env["FOG_CONFIGURE_TYPE"]||"base64") as "base64" | "plain" | "file");
-    let reqHeaders:{[name:string]:string}|undefined;
-    if(configure.useHost){
-        reqHeaders={"host":configure.useHost}
+    let configure = await loadConfigure((process.env["FOG_CONFIGURE_TYPE"] || "base64") as "base64" | "plain" | "file");
+    let reqHeaders: { [name: string]: string } | undefined;
+    if (configure.useHost) {
+        reqHeaders = { "host": configure.useHost }
     }
 
     const express = Express();
@@ -21,14 +21,14 @@ import { CryptoManager } from './fs/icrypto';
         privilegeManager: configure.privilegeManager,
         //port: Number(process.env.PORT || process.env["WEBPORT"] || 3000),
         storageManager: new FogStorageManager(configure.totalSize),
-        reqHeaders:reqHeaders,
-        usedProtocol:configure.useProtocol
+        reqHeaders: reqHeaders,
+        usedProtocol: configure.useProtocol
     });
     server.beforeRequest((ctx, next) => {
         logger.info(`[${ctx.request.method}] ${ctx.requested.path.toString()}`);
         next();
     })
-    server.afterRequest(ctx=>{
+    server.afterRequest(ctx => {
         logger.info(`[${ctx.request.method}] ${ctx.requested.path.toString()} ===> [${ctx.response.statusCode}] ${ctx.response.statusMessage}`);
     })
     // 开始挂载文件系统 
@@ -38,7 +38,10 @@ import { CryptoManager } from './fs/icrypto';
         if (!await storage.initialize()) {
             logger.error(`存储器 ${storage.type}/${storage.id} 初始化失败。`);
         }
-        storageManager.Add(storage);
+        else {
+            logger.info(`存储器 ${storage.type} 初始化结果：${storage.id}`);
+            storageManager.Add(storage);
+        }
     }
     if (!storageManager.Length()) {
         throw new Error("没有可用的存储器。");
@@ -51,20 +54,20 @@ import { CryptoManager } from './fs/icrypto';
         throw new Error("inode文件初始化失败。");
     }
     let fogFs = new FogFileSystem(inodeManager, configure.blockSize);
-    if (await server.setFileSystemAsync(configure.path||"/", fogFs)) {
-        logger.info(`文件系统挂载成功 ${configure.path||"/"}`);
+    if (await server.setFileSystemAsync(configure.path || "/", fogFs)) {
+        logger.info(`文件系统挂载成功 ${configure.path || "/"}`);
     }
     else {
         logger.error("文件系统挂载失败");
     }
 
     // 结束文件系统挂载
-    express.get("/",(req,res,next)=>{
+    express.get("/", (req, res, next) => {
         res.send('雾盘!');
     })
     express.use(webdav.extensions.express('/', server));
-    let httpServer =express.listen(Number(process.env.PORT || process.env["WEBPORT"] || 3000),()=>{
-        httpServer.setTimeout(configure.timeout||0);
+    let httpServer = express.listen(Number(process.env.PORT || process.env["WEBPORT"] || 3000), () => {
+        httpServer.setTimeout(configure.timeout || 0);
         logger.info(`服务启动成功`, httpServer.address());
     })
 })();

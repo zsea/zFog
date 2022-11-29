@@ -10,6 +10,7 @@
 * [ ] 百度网盘
 * [ ] 腾讯云COS
 * [x] 阿里云OSS
+* [x] 夸克网盘
 
 数据流向如下：
 
@@ -123,14 +124,14 @@ Vercel上可以直接运行```typescript```的项目，你可以直接Fork本项
     * base64 - 进行base64进行编码
     * none - 不加密
     * xor - 异或加密
-        * mode - 加密的密钥
+        * mode - 加密的密钥，取值范围：[0,255]
 * id - 加密器ID，设置后请不要改变，数据块解密时需要使用该值来选择加密器。
 
 ### saver
 
 inode数据的存储器。
 
-* type - 存储类型，可选值："gitee"|"github"|"local"|"array"|"memory"|"oss"
+* type - 存储类型，可选值："gitee"|"github"|"local"|"array"|"memory"|"oss"|"quark"
     * gitee - 使用```gitee```仓库存储inode数据。
         * token - 调用API的token
         * owner - 存储仓库的owner
@@ -154,13 +155,16 @@ inode数据的存储器。
         * host - 阿里云OSS所在区域的访问主机，不包括blucket名称
         * blucket -OSS存储的blucket名称
         * root - 存储的根目录
+    * quark - 夸克网盘
+        * cookies - 登录账号的cookie
+        * root - 根目录的fid值
 * from - 将数据块存储器转换为inode数据存储器，此处与数据块存储器配置中的```ref```值相匹配。
 
 ### storages
 
 实际的块数据存储器。
 
-* type - 当前支持的存储器类型，可选值："gitee"|"github"|"local"|"null"
+* type - 当前支持的存储器类型，可选值："gitee"|"github"|"local"|"null"|"oss"|"quark"
     * null - 不存储数据。
     * local - 使用本地文件夹存储数据。
         * path - 存储数据的本地文件夹。
@@ -181,7 +185,10 @@ inode数据的存储器。
         * secret - 阿里云访问的Secret
         * host - 阿里云OSS所在区域的访问主机，不包括blucket名称
         * blucket -OSS存储的blucket名称
-        * root - 存储的根目录        
+        * root - 存储的根目录
+    * quark - 夸克网盘
+        * cookies - 登录账号的cookie
+        * root - 根目录的fid值        
 * mode - 存储器权限。0b111，从左到右，第1位：读的权限，第二位：写的权限，第三位：删除的权限。
 * ref - 字符串，设置值后，在saver配置中可使用当前值匹配到，要求IStorage必须同时实现ISaver
 

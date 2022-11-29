@@ -1,4 +1,4 @@
-/// <reference path="./snowflake.d.ts" />
+/// <reference path="../d/snowflake.d.ts" />
 import {
     LocalPropertyManager,
     LastModifiedDateInfo,
