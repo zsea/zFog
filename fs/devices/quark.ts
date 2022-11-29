@@ -51,7 +51,7 @@ function createAxios(_cookies: string): AxiosInstance {
 
             return config;
         }
-        else if (!u.hostname.endsWith("oss-cn-shenzhen.aliyuncs.com")) {
+        else if (!u.hostname.endsWith(".aliyuncs.com")) {
             return config;
         }
         let task: UploadTask | undefined = config.customize;
