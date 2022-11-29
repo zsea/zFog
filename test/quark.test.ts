@@ -1,7 +1,7 @@
 import { QuarkStorage } from "../fs/devices/quark"
 import { INodeSerializer } from "../fs/inode";
 
-const quark = new QuarkStorage("test", process.env["QUARK_COOKIES"] as string, process.env["QUARK_ROOT"] as string);
+const quark = new QuarkStorage( process.env["QUARK_COOKIES"] as string, process.env["QUARK_ROOT"] as string);
 describe("夸克块测试", () => {
     test("初始化", () => {
         return quark.initialize().then(ret => {
