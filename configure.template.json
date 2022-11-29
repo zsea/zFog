@@ -1,0 +1,57 @@
+{
+    "timeout": 0,
+    "path": "/",
+    "blockSize": 2097152,
+    "copies": 0,
+    "copyMode": "all",
+    "crypto": {
+        "type": "xor",
+        "mode": 82
+    },
+    "saver": {
+        "type": "array",
+        "children": [
+            {
+                "type": "quark"
+            }
+        ]
+    },
+    "storages": [
+        {
+            "type": "gitee",
+            "mode": 7,
+            "token": "",
+            "owner": "",
+            "repo": "",
+            "branch": "master",
+            "root": "/"
+        },
+        {
+            "type": "github",
+            "mode": 7,
+            "token": "",
+            "owner": "",
+            "repo": "",
+            "branch": "main",
+            "root": "/"
+        },
+        {
+            "type": "quark",
+            "mode": 7,
+            "cookies": "",
+            "root": "",
+            "ref": "quark"
+        }
+    ],
+    "authentication": {
+        "type": "basic",
+        "users": [
+            {
+                "username": "admin",
+                "password": "admin"
+            }
+        ]
+    },
+    "useHost": "test.zsea.dev",
+    "useProtocol": "https"
+}
