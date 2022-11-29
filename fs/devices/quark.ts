@@ -145,14 +145,12 @@ export class QuarkStorage extends FullSaver implements IStorage {
     }
     protected async _saver_write(content: string): Promise<void | undefined> {
 
-        let fid = await this.save(Buffer.from(content, "utf8"), ".inodes.json", "application/json");
-        if (fid !== ".inodes.json") {
-            let ofid = await this.getFid(this.root, ".inodes.json");
-            if (ofid) {
-                await this.delete(ofid);
-            }
-            await this.rename(fid, ".inodes.json");
+        let fid = await this.save(Buffer.from(content, "utf8"), undefined, "application/json");
+        let ofid = await this.getFid(this.root, ".inodes.json");
+        if (ofid) {
+            await this.delete(ofid);
         }
+        await this.rename(fid, ".inodes.json");
     }
     protected _saver_read(): Promise<string | undefined> {
         return this.getFid(this.root, ".inodes.json").then(fid => {
