@@ -1,5 +1,5 @@
 /// <reference path="../../d/axios.d.ts" />
-import { FullSaver } from "../isaver";
+import { FullSaver, INodeSaver } from "../isaver";
 import { IStorage } from "../storage";
 import crypto from "node:crypto"
 import path from "node:path/posix"
@@ -7,6 +7,7 @@ import Axios, { AxiosInstance } from 'axios'
 import { v4 as UUIDV4 } from "uuid"
 import { URL } from "node:url";
 import { Promise } from "bluebird";
+import { INodeProperty, INode, INodeSerializer } from "../inode";
 
 interface UploadTask {
     auth_info: string,
@@ -140,20 +141,25 @@ export class QuarkStorage extends FullSaver implements IStorage {
     axios = createAxios(this.cookies)
     private _id: string = "";
     private _last_cookie: number = 0;
+    private _last_inodes_fid: string | undefined;
     constructor(private cookies: string, private root: string) {
         super();
+        //this._id=uuid;
     }
     protected async _saver_write(content: string): Promise<void | undefined> {
 
-        let fid = await this.save(Buffer.from(content, "utf8"), undefined, "application/json");
-        let ofid = await this.getFid(this.root, ".inodes.json");
-        if (ofid) {
-            await this.delete(ofid);
+        if (this._last_inodes_fid) {
+            await this.delete(this._last_inodes_fid);
+            this._last_inodes_fid = undefined;
         }
-        await this.rename(fid, ".inodes.json");
+        let fid = await this.save(Buffer.from(content, "utf8"), undefined, "application/json", "inodes.json");
+        this._last_inodes_fid = fid;
     }
     protected _saver_read(): Promise<string | undefined> {
-        return this.getFid(this.root, ".inodes.json").then(fid => {
+        return Promise.resolve(this._last_inodes_fid).then(fid => {
+            if (fid) return fid;
+            return this.getFid(this.root, "inodes.json");
+        }).then(fid => {
             if (fid) return this.read(fid);
             throw new Error("NotFound")
         }).then(buffer => {
@@ -168,8 +174,8 @@ export class QuarkStorage extends FullSaver implements IStorage {
     read(content: string): Promise<Buffer> {
         return this.getFile(content);
     }
-    async save(buffer: Buffer, origin?: string | undefined, mimeType: string = "application/octet-stream"): Promise<string> {
-        let response = await this.axios.post("https://drive.quark.cn/1/clouddrive/file/upload/pre?pr=ucpro&fr=pc", { "ccp_hash_update": true, "parallel_upload": true, "pdir_fid": this.root, "dir_name": "", "size": buffer.length, "file_name": `${UUIDV4()}.bin`, "format_type": "application/octet-stream", "l_updated_at": Date.now(), "l_created_at": Date.now() }, { headers: { cookie: this.cookies } })
+    async save(buffer: Buffer, origin?: string | undefined, mimeType: string = "application/octet-stream", fileName?: string): Promise<string> {
+        let response = await this.axios.post("https://drive.quark.cn/1/clouddrive/file/upload/pre?pr=ucpro&fr=pc", { "ccp_hash_update": true, "parallel_upload": true, "pdir_fid": this.root, "dir_name": "", "size": buffer.length, "file_name": fileName || `${UUIDV4()}.bin`, "format_type": "application/octet-stream", "l_updated_at": Date.now(), "l_created_at": Date.now() }, { headers: { cookie: this.cookies } })
         let { auth_info, upload_url, bucket, obj_key, upload_id, auth_info_expried, task_id, format_type, callback } = response.data.data;
         let task: UploadTask = {
             task_id: task_id,
@@ -286,19 +292,28 @@ export class QuarkStorage extends FullSaver implements IStorage {
                 let fog = JSON.parse(content);
                 if (fog.id) {
                     this._id = fog.id;
-                    return true;
+                    //return true;
                 }
             }
             catch (e) {
                 //console.error(e);
             }
         }
-        let fog = { id: UUIDV4() }
-        let content = JSON.stringify(fog);
-        fid = await this.save(Buffer.from(content), undefined, "application/json");
-        let code = await this.rename(fid, ".fog")
-        //console.log(fid, code);
-        this._id = fog.id;
+        if (!this._id) {
+            let fog = { id: UUIDV4() }
+            let content = JSON.stringify(fog);
+            fid = await this.save(Buffer.from(content), undefined, "application/json", ".fog");
+            let fogName = await this.getFilename(fid);
+            if (fogName !== ".fog") {
+                await this.rename(fid, ".fog")
+            }
+
+            this._id = fog.id;
+        }
+
+        if (!this._last_inodes_fid) {
+            this._last_inodes_fid = await this.getFid(this.root, "inodes.json", true);
+        }
         return true;
         //return Promise.resolve(true);
     }
@@ -335,13 +350,13 @@ export class QuarkStorage extends FullSaver implements IStorage {
     private getFilename(fid: string): Promise<string> {
         return this.axios.get(`https://drive.quark.cn/1/clouddrive/file/info?pr=ucpro&fr=pc&fid=${fid}`).then(res => res.data.file_name);
     }
-    private getFid(pdir_fid: string, name: string): Promise<string | undefined> {
+    private getFid(pdir_fid: string, name: string, isFile: boolean = true): Promise<string | undefined> {
         return this.axios.get(`https://drive.quark.cn/1/clouddrive/file/search?pr=ucpro&fr=pc&q=${name}&_page=1&_size=50&_fetch_total=1&_sort=file_type:desc,updated_at:desc&_is_hl=1`)
             .then(res => {
                 //console.log(res.data.data.list)
                 if (res.data.data.list) {
                     for (let i = 0; i < res.data.data.list.length; i++) {
-                        if (res.data.data.list[i].file_name === name && res.data.data.list[i].pdir_fid === this.root) {
+                        if (res.data.data.list[i].file_name === name && res.data.data.list[i].pdir_fid === this.root && res.data.data.list[i].file === isFile) {
                             return res.data.data.list[i].fid;
                         }
                     }

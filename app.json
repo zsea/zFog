@@ -1,0 +1,13 @@
+{
+    "name": "zFogPan",
+    "description": "zFogPan",
+    "keywords": [
+      "webdav",
+      "zFogPan"
+    ],
+    "repository": "https://github.com/jane-doe/small-sharp-tool",
+    "scripts": {
+      "postdeploy": "npm run build"
+    },
+    "image": "heroku/nodejs"
+  }

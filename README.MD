@@ -58,9 +58,17 @@ Vercel上可以直接运行```typescript```的项目，你可以直接Fork本项
 
 > 项目中```vercel.json```为vercel环境的配置文件。
 
+你也可以尝试使用一键部署按钮。
+
+![https://camo.githubusercontent.com/5e471e99e8e022cf454693e38ec843036ec6301e27ee1e1fa10325b1cb720584/68747470733a2f2f76657263656c2e636f6d2f627574746f6e](https://vercel.com/import/project?template=https://github.com/zsea/zFog)
+
 ### heroku安装
 
 同样的，你需要Fork本项目到你的仓库，然后通过heroku的部署功能进部署。
+
+你也可以尝试使用一键部署按钮。
+
+![https://camo.githubusercontent.com/bcffcd4a539d4b3c4bde97e0cea7503b9ac8d751ff8e4b5c5ad007a0eb59f518/68747470733a2f2f7777772e6865726f6b7563646e2e636f6d2f6465706c6f792f627574746f6e2e706e67](https://dashboard.heroku.com/new?template=https://github.com/zsea/zFog)
 
 ### 其它方式部署
 

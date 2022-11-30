@@ -1,5 +1,5 @@
 {
-  "name": "git-webdav",
+  "name": "zfogpan",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -10,6 +10,9 @@
     "start": "node ./dist/index.js",
     "setup": "npm install & npm run build",
     "test": "env-loador jest ./test/quark.test.ts --runInBand --logHeapUsage --detectOpenHandles"
+  },
+  "engines": {
+    "node": "14.0.0" 
   },
   "keywords": [],
   "author": "",
