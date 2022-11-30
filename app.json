@@ -9,5 +9,17 @@
     "scripts": {
       "postdeploy": "npm run build"
     },
-    "image": "heroku/nodejs"
+    "image": "heroku/nodejs",
+    "env":{
+        "FOG_CONFIGURE_TYPE":{
+            "description":"配置格式",
+            "value":"base64",
+            "required":true
+        },
+        "FOG_CONFIGURE":{
+            "description":"配置值，若是file方式则可以为空",
+            "value":"",
+            "required":false
+        }
+    }
   }
