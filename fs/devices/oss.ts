@@ -1,7 +1,7 @@
 import { FullSaver } from "../isaver";
 import { IStorage } from "../storage";
-import crypto from "node:crypto"
-import path from "node:path/posix"
+import crypto from "crypto"
+import path from "path/posix"
 import Axios, { AxiosInstance } from 'axios'
 import { retry } from "../retry"
 import { v4 as UUIDV4 } from "uuid"
