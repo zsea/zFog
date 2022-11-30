@@ -2,12 +2,11 @@
 import { FullSaver } from "../isaver";
 import { IStorage } from "../storage";
 import crypto from "crypto"
-import path from "path/posix"
+import {posix as path} from "path"
 import Axios, { AxiosInstance } from 'axios'
 import { v4 as UUIDV4 } from "uuid"
 import { URL } from "url";
 import { Promise } from "bluebird";
-
 interface UploadTask {
     auth_info: string,
     upload_url: string,

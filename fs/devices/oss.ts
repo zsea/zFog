@@ -1,7 +1,7 @@
 import { FullSaver } from "../isaver";
 import { IStorage } from "../storage";
 import crypto from "crypto"
-import path from "path/posix"
+import { posix as path } from "path"
 import Axios, { AxiosInstance } from 'axios'
 import { retry } from "../retry"
 import { v4 as UUIDV4 } from "uuid"
@@ -75,7 +75,7 @@ export class OSSStorage extends FullSaver implements IStorage {
     }
     protected _saver_write(content: string): Promise<void | undefined> {
 
-        return this.save(Buffer.from(content, "utf8"), "inodes.json","application/json").then(() => { })
+        return this.save(Buffer.from(content, "utf8"), "inodes.json", "application/json").then(() => { })
     }
     protected _saver_read(): Promise<string | undefined> {
         return this.read("inodes.json").then(buffer => {
@@ -103,8 +103,8 @@ export class OSSStorage extends FullSaver implements IStorage {
     }
     delete(content: string): Promise<void> {
         let _path = path.join('/', this.root, content);
-        return this.axios.delete(_path).then(()=>{});
-        
+        return this.axios.delete(_path).then(() => { });
+
     }
     get type(): string {
         return "oss";
@@ -134,14 +134,14 @@ export class OSSStorage extends FullSaver implements IStorage {
         }
         if (!this._id) {
             let id = UUIDV4();
-            await this.save(Buffer.from(JSON.stringify({ id: id })), ".fog","application/json");
+            await this.save(Buffer.from(JSON.stringify({ id: id })), ".fog", "application/json");
             this._id = id
         }
 
         return !!this._id;
     }
     private getFile(path: string): Promise<Buffer> {
-        return this.axios.get(path,{responseType:"blob"})
+        return this.axios.get(path, { responseType: "blob" })
             .then(function (res) {
                 return res.data;
             }).catch(function (e) {
