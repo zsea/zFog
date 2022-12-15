@@ -1,4 +1,5 @@
-name: 发布到Docker
+name: Publish Docker image
+on:
   push:
     branches: [ master ]
 jobs:
